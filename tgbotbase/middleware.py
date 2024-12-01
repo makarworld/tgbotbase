@@ -111,6 +111,8 @@ class ThrottlingMiddleware(BaseMiddleware):
                 html_text = event.html_text,
                 text = event.text if event.text else event.caption
             )
+        else:
+            data["media"] = None
 
         try:
             await self.on_process_event(event, data["handler"])
