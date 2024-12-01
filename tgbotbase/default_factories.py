@@ -70,7 +70,14 @@ class StateFactory:
     
     class InputLogins(StatesGroup):
         count: State = State()
+    
+    class Upload(StatesGroup):
+        value: State = State()
+        self_cost: State = State()
 
+    class InputAmountTopUp(StatesGroup):
+        value: State = State()
+    
 class ExceptionFactory:
     class DateTimeExpired(Exception):
         pass

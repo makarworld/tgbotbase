@@ -48,10 +48,11 @@ def rate_limit(limit: int, key = None):
 class ThrottlingMiddleware(BaseMiddleware):
     medias = {}
 
-    def __init__(self, redis: redis.asyncio.client.Redis, limit = .5, key_prefix = 'antiflood_'):
+    def __init__(self, redis: redis.asyncio.client.Redis, limit = .5, key_prefix = 'antiflood_', extra_logic: Callable[[Message], Awaitable[Any]] = None):
         self.rate_limit = limit
         self.prefix = key_prefix
         self.throttle_manager = ThrottleManager(redis = redis)
+        self.extra_logic = extra_logic
 
         super(ThrottlingMiddleware, self).__init__()
 
@@ -182,12 +183,8 @@ class ThrottlingMiddleware(BaseMiddleware):
         # check trigger on menu
         # TODO: add condition user was created < 1d ago
            #cxt.callback_data == CallbackFactory(action = "menu").pack() or \
-        if cxt.is_callback and \
-           cxt.callback_data == CallbackFactory(action = "products").pack() or \
-           cxt.callback_data.startswith("part:"):
-            user.trigger('menu')
-        else:
-            user.clear_trigger('menu')
+        if self.extra_logic:
+            await self.extra_logic(cxt, user)
 
         # add args to handler
         #data["localize"] = partial(localizator, locale = user.language or "en") 
