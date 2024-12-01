@@ -67,7 +67,10 @@ class StateFactory:
     
     class InputFiatAmount(StatesGroup):
         value: State = State()
-        
+    
+    class InputLogins(StatesGroup):
+        count: State = State()
+
 class ExceptionFactory:
     class DateTimeExpired(Exception):
         pass

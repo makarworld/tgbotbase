@@ -388,23 +388,6 @@ def str_time_to_sec(number: str) -> int:
                       else 1
                     ) for x in number.split('+')])
 
-def plz_buy(n: int) -> int:
-    # Допродажа
-    if n >= 1 and n <= 5:
-        return 1
-    
-    elif n >= 6 and n <= 15:
-        return 2
-    
-    elif n >= 16 and n <= 30:
-        return 3
-    
-    elif n >= 31 and n <= 50:
-        return 4
-    
-    elif n >= 51:
-        return 5
-
 def get_usdtrub(fee: float = 7.5) -> float:
     """
     Get USDT/RUB price from garantex
