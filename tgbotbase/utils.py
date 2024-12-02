@@ -85,6 +85,10 @@ yaml = ruamel.yaml.YAML()
 Localize = Callable[[str], str]
 
 
+# load locales
+i18n.load_path.append(os.path.join(os.path.dirname(__file__), utils_settings["locales_folder"]))
+i18n.set("encoding", "utf-8")
+
 logger.remove()
 logger.add(stderr, 
            format = utils_settings["log_format"])
