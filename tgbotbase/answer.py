@@ -4,9 +4,8 @@ from typing import Any, Awaitable, Callable, List
 from aiogram import Bot
 from aiogram.types import CallbackQuery, ContentType, InlineKeyboardMarkup, Message
 
-from tgbotbase.answer import Media
 from tgbotbase.keyboards import keyboard
-from tgbotbase.utils import logger
+from tgbotbase.utils import Media, logger
 
 # for local debugging
 try:
