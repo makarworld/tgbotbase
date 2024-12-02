@@ -9,7 +9,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 from peewee import Model as BaseModel
 from peewee import ModelSelect
 
-from tgbotbase.default_factories import CallbackFactory, MultiKeyboardFactory
+from tgbotbase.factories import CallbackFactory, MultiKeyboardFactory
 from tgbotbase.utils import (
     KeyboardStorage,
     add_session_to_keyboard,

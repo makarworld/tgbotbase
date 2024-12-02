@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from tgbotbase.answer import AnswerContext
-from tgbotbase.default_factories import MultiKeyboardFactory
+from tgbotbase.factories import MultiKeyboardFactory
 from tgbotbase.keyboards import keyboard
 from tgbotbase.utils import SHARED_OBJECTS, KeyboardStorage, get_sender, logger
 
