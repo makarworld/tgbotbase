@@ -48,11 +48,17 @@ def rate_limit(limit: int, key = None):
 class ThrottlingMiddleware(BaseMiddleware):
     medias = {}
 
-    def __init__(self, redis: redis.asyncio.client.Redis, limit = .5, key_prefix = 'antiflood_', extra_logic: Callable[[Message], Awaitable[Any]] = None):
+    def __init__(self, 
+                 redis: redis.asyncio.client.Redis, 
+                 limit = .5, 
+                 key_prefix = 'antiflood_', 
+                 autoreset_inline: bool = False,
+                 extra_logic: Callable[[Message], Awaitable[Any]] = None):
         self.rate_limit = limit
         self.prefix = key_prefix
         self.throttle_manager = ThrottleManager(redis = redis)
         self.extra_logic = extra_logic
+        self.autoreset_inline = autoreset_inline
 
         super(ThrottlingMiddleware, self).__init__()
 
@@ -181,10 +187,12 @@ class ThrottlingMiddleware(BaseMiddleware):
             raise CancelHandler()
 
         cxt = AnswerContext(message, user, data)
+        
+        if self.autoreset_inline:
+            dont_reset = getattr(data["handler"].callback, "dont_reset_button", False)
+            if dont_reset is False:
+                await cxt.reset_button()
 
-        # check trigger on menu
-        # TODO: add condition user was created < 1d ago
-           #cxt.callback_data == CallbackFactory(action = "menu").pack() or \
         if self.extra_logic:
             await self.extra_logic(cxt, user)
 
