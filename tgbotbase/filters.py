@@ -1,3 +1,4 @@
+import os
 from typing import *
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Filter
@@ -26,3 +27,14 @@ class ChatType(Filter):
     async def __call__(self, message: Message | CallbackQuery) -> bool:
         return message.chat.type in self.types and message.chat.type not in self.exclude if isinstance(message, Message)\
           else message.message.chat.type in self.types and message.message.chat.type not in self.exclude
+
+
+class PauseFilter(Filter):
+    def __init__(self):
+        pass
+
+    async def __call__(self, message) -> bool:
+        if os.environ["GLOBAL_PAUSE"] == "true":
+            return True 
+
+        return False
