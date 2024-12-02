@@ -16,9 +16,9 @@ from tgbotbase.utils import (
     Media,
     answer_message,
     get_logger_filename,
-    localizator,
-    logger,
+    logger
 )
+from tgbotbase.i18n import localizator
 
 # for local debugging
 try:
