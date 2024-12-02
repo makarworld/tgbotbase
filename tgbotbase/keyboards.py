@@ -18,8 +18,8 @@ from tgbotbase.utils import (
 try:
     from src.models import User, BookType # type: ignore
 except ImportError:
-    User = Any
-    BookType = Any
+    class User(Any): ...
+    class BookType(Any): ...
 
 class keyboard:
     config_file = utils_settings["keyboards_path"]
@@ -110,7 +110,7 @@ class keyboard:
 #
     
     @staticmethod
-    def book(user: User, # type: ignore
+    def book(user: User,
              query: ModelSelect, 
              localize: Callable[[str], str],
              select_handler: Callable,

@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 """
 
 
-version = '1.0.4'
+version = '1.0.5'
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -25,7 +25,7 @@ setup(
     description="Universal telegram bot base for bots maded by @abuztrade on aiogram 3.x",
 
     packages=['tgbotbase'],
-    install_requires=['aiogram', 'redis', 'peewee'],
+    install_requires=['aiogram', 'redis', 'peewee', 'ruamel.yaml', 'python-i18n[YAML]'],
 
     license='MIT License',
     long_description=long_description,

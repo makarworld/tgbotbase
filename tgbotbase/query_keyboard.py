@@ -16,15 +16,15 @@ from tgbotbase.answer import AnswerContext
 try:
     from src.models import User, BookType # type: ignore
 except ImportError:
-    User = Any
-    BookType = Any
+    class User(Any): ...
+    class BookType(Any): ...
 
 # get classes, variables and functions from shared objects
 dp: Dispatcher = SHARED_OBJECTS["dp"]
 
 @dp.callback_query(MultiKeyboardFactory.filter(F.action == "page"))
 async def page(callback: CallbackQuery, callback_data: MultiKeyboardFactory,
-               user: User,  # type: ignore
+               user: User,
                cxt: AnswerContext):
     
     data: dict = KeyboardStorage.get(user.user_id, {})
@@ -48,7 +48,7 @@ async def page(callback: CallbackQuery, callback_data: MultiKeyboardFactory,
 
 @dp.callback_query(MultiKeyboardFactory.filter(F.action ==  "select"))
 async def select(callback: CallbackQuery, callback_data: MultiKeyboardFactory, state: FSMContext,
-                 user: User,  # type: ignore
+                 user: User,
                  cxt: AnswerContext):
     data: dict = KeyboardStorage.get(user.user_id, {})
     if data.get('kb_session') != callback_data.kb_session:
@@ -82,7 +82,7 @@ async def select(callback: CallbackQuery, callback_data: MultiKeyboardFactory, s
 
 @dp.callback_query(MultiKeyboardFactory.filter(F.action ==  "send"))
 async def send_selected(callback: CallbackQuery, 
-                        user: User,  # type: ignore
+                        user: User,
                         callback_data: MultiKeyboardFactory,
                         cxt: AnswerContext):
     sender = get_sender(callback)
@@ -97,5 +97,5 @@ async def send_selected(callback: CallbackQuery,
     await cxt.redirect(data["select_handler"], selected = selected)
 
 @dp.callback_query(MultiKeyboardFactory.filter(F.action ==  "secret"))
-async def secret(message: CallbackQuery, user: User, callback_data: MultiKeyboardFactory, state: FSMContext): # type: ignore
+async def secret(message: CallbackQuery, user: User, callback_data: MultiKeyboardFactory, state: FSMContext):
     await message.answer("🫣👽💦💦🔞") 

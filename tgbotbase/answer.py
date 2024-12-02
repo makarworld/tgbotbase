@@ -9,10 +9,10 @@ from tgbotbase.keyboards import keyboard
 try:
     from src.models import User # type: ignore
 except ImportError:
-    User = Any
+    class User(Any): ...
 
 class AnswerContext:
-    def __init__(self, message: Message, user: User, data: dict): # type: ignore
+    def __init__(self, message: Message, user: User, data: dict):
         self._message = message
         self.user = user
         self.data = data 

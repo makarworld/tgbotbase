@@ -17,7 +17,7 @@ from tgbotbase.utils import answer_message, Media, get_logger_filename, localiza
 try:
     from src.models import User # type: ignore
 except ImportError:
-    User = Any
+    class User(Any): ...
 
 
 def dont_reset_button(func):
@@ -155,7 +155,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             return
 
         # find user
-        user: User = User.select().where(User.user_id == message.from_user.id).first()# type: ignore #.cached_get_user(message.from_user.id, cache_time = 1)
+        user: User = User.select().where(User.user_id == message.from_user.id).first()
         
         if not user:
             # if not finded -> create
