@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from sys import stderr
 from typing import Callable, Dict, Union
 
+import i18n
 import requests
 import ruamel.yaml
 from aiogram.methods.edit_message_text import EditMessageText
@@ -63,7 +64,7 @@ utils_settings = {
     "compression": "zip",
     "backtrace": True,
     "diagnose": True,
-    "locales_folder": "locales",
+    "locales_folder": "./locales",
     "locales_startswith": "bot",
     "keyboards_path": "./src/keyboards.yml",
 }
@@ -110,6 +111,24 @@ logger.add(
 logger.level("DEBUG", color="<magenta>")
 
 KeyboardStorage: Dict[int, dict] = {}
+
+
+# load locales
+i18n.load_path.append(utils_settings["locales_folder"])
+i18n.set("encoding", "utf-8")
+
+
+def localizator(key: str, locale: str = "en", **kwargs) -> str:
+    return i18n.t(
+        f"{utils_settings['locales_startswith']}.{key}", locale=locale, **kwargs
+    )
+
+
+def reload_i18n() -> None:
+    i18n.translations.container.clear()
+
+    for dir in i18n.load_path:
+        i18n.resource_loader.load_directory(dir)
 
 
 def set_value_i18n(locale: str, path: str, value: str):
