@@ -21,6 +21,7 @@ SHARED_OBJECTS["dp"] = dp
 
 import os
 import random
+import re
 import string
 import time
 from dataclasses import dataclass
@@ -467,3 +468,7 @@ def get_usdtrub(fee: float = 7.5) -> float:
         except Exception as e:
             logger.warning(f"[{i+1}] Failed to get usdtrub price: {e}")
             time.sleep(0.5)
+
+def check_text_pattern(pattern: str, text: str) -> bool:
+    check = re.findall(pattern, text)
+    return check is not None and len(check) == len(text.split("\n"))
