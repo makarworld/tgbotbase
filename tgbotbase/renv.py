@@ -16,8 +16,21 @@ async def check_renv(default_keys: dict):
             await renv(key, default_value)
             logger.warning(f"[RENV] Added default key {key} with value {default_value}")
 
+async def get_renv_keys() -> dict:
+    all_redis_items = await async_redis.keys("*")
+    all_keys = [item.decode() for item in all_redis_items]
+    # filter FSM and throttle keys
+    all_keys = [key for key in all_keys if not key.startswith("throttle_antiflood") and not key.startswith("fsm")]
+    all_items = await async_redis.mget(all_keys)
+    # convert all_items to dict
+    all_items = {key: item.decode() for key, item in zip(all_keys, all_items)}
+    return all_items
 
-async def renv(key: str, value: str | bool = None) -> str | bool | None:
+
+async def renv(key: str = None, value: str | bool = None) -> str | bool | dict | None:
+    if key is None:
+        return await get_renv_keys()
+    
     if value is None:
         current_value = await async_redis.get(key)
         current_value = current_value.decode() if current_value else None

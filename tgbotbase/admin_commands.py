@@ -6,6 +6,7 @@ from aiogram.types import Message
 from tgbotbase.answer import AnswerContext
 from tgbotbase.filters import Role
 from tgbotbase.utils import SHARED_OBJECTS, check_text_pattern, get_msg_args, logger
+from tgbotbase.renv import renv
 
 # for local debugging
 try:
@@ -34,32 +35,61 @@ if not renv_value_filters:
 #renv_value_filters = {
 #    "commissions": [r"^[\d.]+,[\d.]+,[\d.]+,[\d.]+,[\d.]+$", "10,9,8,6,5"],
 #}
-
+class RenvTEXT:
+    usage = "<b>Usage:</b>\n/renv KEY\n/renv KEY VALUE"
+    get_key = "<b>Key:</b> <code>{key}</code>\n<b>Current value:</b> <code>{value}</code>"
+    set_key_value = "<b>Key:</b> <code>{key}</code>\n<b>Set new value:</b> <code>{value}</code> -> <code>{new_value}</code>"
+    set_key_filter_error = "Invalid value format.\n\n<b>Key:</b> <code>{key}</code>\nCurrent value: <code>{value}</code>\nYour value: <code>{new_value}</code>\n\nFormat: {pattern}\nExample: {example}"
 
 @admin_router.message(Role(UserRole.OWNER.value), Command("renv"))
 async def edit_renv(message: Message, user: User, cxt: AnswerContext):
-    ok, args = await get_msg_args(message, 1, (
-        "Usage:\n"
-        "/renv KEY\n"
-        "/renv KEY VALUE\n"
-        ),
+    ok, args = await get_msg_args(message, 1, RenvTEXT.usage,
         validator = lambda len_args, target: len_args < target
     )
     if not ok:
         return
 
-    current_value = await async_redis.get(args[0])
-    current_value = current_value.decode() if current_value else None
+    key = args[0]
+
+    current_value = await renv(key)
     
     if len(args) == 1:
-        await cxt.answer(f"Текущее значение: {current_value}")
+        await cxt.answer(RenvTEXT.get_key.format(
+            key = key, 
+            value = current_value
+        ), parse_mode = "HTML")
     else:
         key, value = args[:2]
-        if key in renv_value_filters:
-            pattern, example = renv_value_filters[key]
+        if pattern_example_list := renv_value_filters.get(key):
+            pattern, example = pattern_example_list
             if not check_text_pattern(pattern, value):
-                await cxt.answer(f"Неверный формат значения.\nТекущее значение: {current_value}\nВаше значение: {value}\n\nФормат: {pattern}\nПример: {example}")
+                await cxt.answer(RenvTEXT.set_key_filter_error.format(
+                    key = key,
+                    value = current_value,
+                    new_value = value,
+                    pattern = pattern,
+                    example = example,
+                ), parse_mode = "HTML")
                 return
 
-        await async_redis.set(key, value)
-        await cxt.answer(f"Установлено значение: {current_value} -> {value}")
+        await renv(key, value)
+        await cxt.answer(RenvTEXT.set_key_value.format(
+            key = key, 
+            value = current_value, 
+            new_value = value
+        ), parse_mode = "HTML")
+
+
+@admin_router.message(Role(UserRole.OWNER.value), Command("renv_items"))
+async def renv_items(message: Message, user: User, cxt: AnswerContext):
+    items = await renv()
+    text = ""
+    for key, value in items.items():
+        text += f"<b>{key}</b>: <code>{value}</code>\n"
+        if pattern_example_list := renv_value_filters.get(key):
+            pattern, example = pattern_example_list
+            text += f"Format: {pattern} | Example: {example}\n"
+        
+        text += "\n"
+
+    await cxt.answer(text, parse_mode = "HTML")
