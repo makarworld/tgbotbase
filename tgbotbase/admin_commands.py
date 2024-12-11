@@ -41,7 +41,7 @@ class RenvTEXT:
     set_key_value = "<b>Key:</b> <code>{key}</code>\n<b>Set new value:</b> <code>{value}</code> -> <code>{new_value}</code>"
     set_key_filter_error = "Invalid value format.\n\n<b>Key:</b> <code>{key}</code>\nCurrent value: <code>{value}</code>\nYour value: <code>{new_value}</code>\n\nFormat: {pattern}\nExample: {example}"
 
-@admin_router.message(Role(UserRole.OWNER.value), Command("renv"))
+@admin_router.message(Role(UserRole.OWNER.value), Command("renv", "r"))
 async def edit_renv(message: Message, user: User, cxt: AnswerContext):
     ok, args = await get_msg_args(message, 1, RenvTEXT.usage,
         validator = lambda len_args, target: len_args < target
@@ -80,7 +80,7 @@ async def edit_renv(message: Message, user: User, cxt: AnswerContext):
         ), parse_mode = "HTML")
 
 
-@admin_router.message(Role(UserRole.OWNER.value), Command("renv_items"))
+@admin_router.message(Role(UserRole.OWNER.value), Command("renv_items", "renvs", "renv_list", "renvs_list"))
 async def renv_items(message: Message, user: User, cxt: AnswerContext):
     items = await renv()
     text = ""
