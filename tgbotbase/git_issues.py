@@ -1,4 +1,4 @@
-import github_create_issue
+import tgbotbase.github_create_issue as github_create_issue
 from hashlib import sha256
 
 

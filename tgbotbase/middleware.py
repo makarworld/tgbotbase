@@ -20,7 +20,7 @@ from tgbotbase.utils import (
     localizator,
     logger
 )
-from git_issues import GitIssue
+from tgbotbase.git_issues import GitIssue
 
 # for local debugging
 try:
