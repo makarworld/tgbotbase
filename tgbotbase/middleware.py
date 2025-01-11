@@ -10,6 +10,7 @@ import redis.asyncio.client
 from aiogram import BaseMiddleware
 from aiogram.types import CallbackQuery, ContentType, FSInputFile, Message
 
+from tgbotbase.renv import renv
 from tgbotbase.answer import AnswerContext
 from tgbotbase.keyboards import keyboard
 from tgbotbase.utils import (
@@ -19,6 +20,7 @@ from tgbotbase.utils import (
     localizator,
     logger
 )
+from git_issues import GitIssue
 
 # for local debugging
 try:
@@ -155,19 +157,32 @@ class ThrottlingMiddleware(BaseMiddleware):
         except Exception as e:
             logger.exception(e)
 
+            message_text = localizator(
+                "handler_exception",
+                module=data["handler"].callback.__module__,
+                name=data["handler"].callback.__name__,
+                err=str(e).replace("<", "^").replace(">", "^"),
+                #
+                locale="ru",
+            )
+
             owner_id = int(os.getenv("OWNER_ID"))
-            await event.bot.send_document(
+            message_id = await event.bot.send_document(
                 chat_id=owner_id,
-                caption=localizator(
-                    "handler_exception",
-                    module=data["handler"].callback.__module__,
-                    name=data["handler"].callback.__name__,
-                    err=str(e).replace("<", "^").replace(">", "^"),
-                    #
-                    locale="ru",
-                ),
+                caption=message_text,
                 document=FSInputFile(get_logger_filename()),
             )
+
+            # try to create issue in github
+            issue = GitIssue(e, message_text, message_id)
+            # get data about existing issue for this error
+            renv_data = await renv(f"git-issue-{issue.err_hash}")
+            # set renv
+            issue.set_renv(renv_data)
+            # create/edit issue
+            result = issue.create()
+            # save new info about this issue
+            await renv(f"git-issue-{issue.err_hash}", result)
 
         return result
 
