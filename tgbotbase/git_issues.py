@@ -24,7 +24,7 @@ class GitIssue:
 
     @property
     def err_hash(self) -> str:
-        return sha256(f"{self.main_error}-{self.text}".encode("utf-8")).hexdigest()
+        return sha256(f"{self.main_error}-{self.text}".encode("utf-8")).hexdigest()[:8]
     
     @property
     def main_error(self) -> str:
