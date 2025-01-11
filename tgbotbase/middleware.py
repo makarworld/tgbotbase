@@ -174,7 +174,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             )
 
             # try to create issue in github
-            issue = GitIssue(e, message_text, message.message_id)
+            issue = GitIssue(e, message_text.replace("\n", "\n\n"), message.message_id)
             # get data about existing issue for this error
             renv_data = await renv(f"git-issue-{issue.err_hash}")
             # set renv
