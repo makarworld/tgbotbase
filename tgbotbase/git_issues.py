@@ -17,9 +17,8 @@ class GitIssue:
 
     def issue_text(self) -> str:
         return (
-            f"Exception: {self.ex}\n\n"
-            f"Message: \n{self.text}\n\n"
-            f"Message ID: {self.message_id}"
+            f"{self.text}\n\n"
+            f"Message ID: `/m {self.message_id}`"
         )
 
     @property

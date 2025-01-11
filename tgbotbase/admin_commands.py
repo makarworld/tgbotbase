@@ -93,3 +93,8 @@ async def renv_items(message: Message, user: User, cxt: AnswerContext):
         text += "\n"
 
     await cxt.answer(text, parse_mode = "HTML")
+
+@admin_router.message(Role(UserRole.OWNER.value), Command("m"))
+async def m(message: Message, user: User, cxt: AnswerContext):
+    mid = int(message.text.split()[1])
+    await cxt.answer(f"mid: {mid}", reply_to_message_id = mid)

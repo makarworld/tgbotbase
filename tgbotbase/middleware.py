@@ -167,14 +167,14 @@ class ThrottlingMiddleware(BaseMiddleware):
             )
 
             owner_id = int(os.getenv("OWNER_ID"))
-            message_id = await event.bot.send_document(
+            message = await event.bot.send_document(
                 chat_id=owner_id,
                 caption=message_text,
                 document=FSInputFile(get_logger_filename()),
             )
 
             # try to create issue in github
-            issue = GitIssue(e, message_text, message_id)
+            issue = GitIssue(e, message_text, message.message_id)
             # get data about existing issue for this error
             renv_data = await renv(f"git-issue-{issue.err_hash}")
             # set renv
