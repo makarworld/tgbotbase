@@ -149,6 +149,7 @@ class AnswerContext:
                         parse_mode=parse_mode,
                         disable_web_page_preview=True,
                         reply_markup=reply_markup,
+                        reply_to_message_id=reply_to_message_id,
                         disable_notification=disable_notification,
                     )
 
