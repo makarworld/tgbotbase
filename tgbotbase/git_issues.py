@@ -10,7 +10,7 @@ class GitIssue:
         self.renv_data = False
 
     def set_renv(self, renv_data: str):
-        self.renv_data: tuple[int, int] | int = map(int, renv_data.split(",")) if renv_data else 0
+        self.renv_data: tuple[int, int] | int = list(map(int, renv_data.split(","))) if renv_data else 0
 
     def title(self) -> str:
         return f"({self.renv_data[1] + 1 if self.renv_data else 1}) [{self.err_hash}] {self.main_error}"
