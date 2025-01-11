@@ -40,8 +40,7 @@ class GitIssue:
                 title = self.title(),
                 body = self.issue_text(),
                 assignee = github_create_issue.GITHUB_USER,
-                labels = ["bug"],
-                dry = True
+                labels = ["bug"]
             )
             return f"{issue_id},{1}"
         
@@ -51,8 +50,7 @@ class GitIssue:
                 title = self.title(),
                 body = self.issue_text(),
                 assignee = github_create_issue.GITHUB_USER,
-                labels = ["bug"],
-                dry = True
+                labels = ["bug"]
             )
             return f"{self.renv_data[0]},{self.renv_data[1] + 1}"
         
